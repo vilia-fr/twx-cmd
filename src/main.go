@@ -6,26 +6,28 @@ import (
     "./api"
 )
 
-func parseParams() (urlPtr, appKeyPtr, usernamePtr, passwordPtr *string) {
+func parseParams() (operationPtr, urlPtr, appKeyPtr, usernamePtr, passwordPtr *string, isVerbose *bool) {
+    operationPtr = flag.String("op", "get-version", "Operation")
     urlPtr = flag.String("url", "http://localhost:8080/Thingworx", "ThingWorx base URL")
     appKeyPtr = flag.String("appKey", "", "ThingWorx AppKey")
     usernamePtr = flag.String("username", "Administrator", "ThingWorx user")
     passwordPtr = flag.String("password", "", "ThingWorx password")
+    isVerbose = flag.Bool("verbose", false, "Verbose output mode")
     flag.Parse()
     return
 }
 
 func main() {
-    urlPtr, appKeyPtr, usernamePtr, passwordPtr := parseParams()
+    operationPtr, urlPtr, appKeyPtr, usernamePtr, passwordPtr, isVerbose := parseParams()
+    twx := api.Api { *usernamePtr, *passwordPtr, *appKeyPtr, *urlPtr, *isVerbose }
 
-    fmt.Println("Parameters:")
-    fmt.Println("- URL:", *urlPtr)
-    fmt.Println("- AppKey:", *appKeyPtr)
-    fmt.Println("- User:", *usernamePtr)
-    fmt.Println("- Password:", *passwordPtr)
-    
-    twx := api.Api { *usernamePtr, *passwordPtr, *appKeyPtr, *urlPtr }
-    
-    fmt.Println("- World:", twx.NewApi())
-    
+	switch *operationPtr {
+	case "get-version":
+		if *isVerbose {
+			fmt.Println("Getting platform version...")
+		}
+		fmt.Println(twx.GetVersion())
+	default:
+		fmt.Println("ERROR: Unrecognized operation:", *operationPtr)
+	}    
 }
