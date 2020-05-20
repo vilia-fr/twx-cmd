@@ -3,20 +3,29 @@ package main
 import (
     "flag"
     "fmt"
+    "./api"
 )
 
-func main() {
-
-    urlPtr := flag.String("url", "http://localhost:8080/Thingworx", "ThingWorx base URL")
-    appKeyPtr := flag.String("appKey", "", "ThingWorx AppKey")
-    usernamePtr := flag.String("username", "Administrator", "ThingWorx user")
-    passwordPtr := flag.String("password", "", "ThingWorx password")
-
+func parseParams() (urlPtr, appKeyPtr, usernamePtr, passwordPtr *string) {
+    urlPtr = flag.String("url", "http://localhost:8080/Thingworx", "ThingWorx base URL")
+    appKeyPtr = flag.String("appKey", "", "ThingWorx AppKey")
+    usernamePtr = flag.String("username", "Administrator", "ThingWorx user")
+    passwordPtr = flag.String("password", "", "ThingWorx password")
     flag.Parse()
+    return
+}
 
-    fmt.Println("url:", *urlPtr)
-    fmt.Println("appKeyPtr:", *appKeyPtr)
-    fmt.Println("usernamePtr:", *usernamePtr)
-    fmt.Println("passwordPtr:", *passwordPtr)
-    fmt.Println("tail:", flag.Args())
+func main() {
+    urlPtr, appKeyPtr, usernamePtr, passwordPtr := parseParams()
+
+    fmt.Println("Parameters:")
+    fmt.Println("- URL:", *urlPtr)
+    fmt.Println("- AppKey:", *appKeyPtr)
+    fmt.Println("- User:", *usernamePtr)
+    fmt.Println("- Password:", *passwordPtr)
+    
+    twx := api.Api { *usernamePtr, *passwordPtr, *appKeyPtr, *urlPtr }
+    
+    fmt.Println("- World:", twx.NewApi())
+    
 }
